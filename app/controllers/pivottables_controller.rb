@@ -57,6 +57,10 @@ class PivottablesController < ApplicationController
       # Exclude description
       @query.available_columns.delete_if { |querycolumn| querycolumn.name == :description }
 
+      # custom_field_select is_filter 
+      cfs = CustomField.where("is_filter = 0").pluck(:id).map{|n| "cf_#{n}".to_sym}
+      @query.available_columns.delete_if { |querycolumn| cfs.include?(querycolumn.name)}
+    
       if (params[:closed] == "1")
           @query.add_filter("status_id", "*", [''])
       end
